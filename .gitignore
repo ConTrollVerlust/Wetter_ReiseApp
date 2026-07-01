@@ -1,0 +1,14 @@
+# IDE-Ordner
+.idea/
+
+# Virtuelle Umgebung
+venv/
+.venv/
+env/
+
+#API-Keys
+.env
+
+# Python-Caches
+__pycache__/
+/daten/reiseapp.db
