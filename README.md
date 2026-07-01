@@ -1,30 +1,32 @@
 ☀️ Reise-Radar
+Eine interaktive Reise- und Wetter-App (Python & Streamlit) mit 14-Tage-Vorhersage, Länderinfos und Bildergalerien.
 
-Eine interaktive Reise- und Wetter-App, gebaut mit Python und Streamlit.
-Dieses Projekt bündelt Wetterdaten, eine 14-Tage-Vorhersage, dynamische Länderinformationen und Bildergalerien für eine optimale Reiseplanung.
+✨ Features
+Architektur: Saubere Schichtentrennung (Frontend in gui/, Backend in core/).
 
-🚀 Lokale Installation (Für Prüfer/Dozenten)
+Datenbank: Lokale SQLite-Datenbank (reiseapp.db) für Favoriten.
 
-Voraussetzung: Python 3.9 oder neuer muss installiert sein.
+APIs: Open-Meteo, REST Countries & Pixabay (inkl. Fallback-System).
 
-Repository klonen:
+🚀 Installation & Start
+Voraussetzung: Python 3.9+
 
-git clone <dein-github-link>
-cd <dein-ordnername>
+1. Code herunterladen
 
+ZIP-Datei entpacken und in den Ordner navigieren
 
-Abhängigkeiten installieren:
-Installiere alle benötigten Bibliotheken (Streamlit, Pandas, etc.):
+2. Abhängigkeiten installieren
 
 pip install -r requirements.txt
 
+3. API-Key (Optional)
+Aus Datenschutzgründen sind keine Keys im Code. Die App läuft auch ohne Key fehlerfrei (es laden dann Platzhalter-Bilder).
+Um dynamische Bilder zu testen (benötigt Pixabay API-Key), gibt es zwei Optionen:
 
-Umgebungsvariablen setzen:
-Erstelle eine Datei namens .env im Hauptverzeichnis und füge deinen Pixabay API-Key ein:
+Im UI (Empfohlen): App starten und den Key bequem in das Eingabefeld der Seitenleiste kopieren.
 
-PIXABAY_API_KEY=dein_api_key_hier
+Per Datei: Eine .env Datei im Hauptverzeichnis anlegen mit: PIXABAY_API_KEY=dein_api_key_hier
 
-
-App starten:
+4. App starten
 
 streamlit run gui/app.py

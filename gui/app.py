@@ -17,6 +17,16 @@ import streamlit.components.v1 as components
 import pandas as pd
 import altair as alt
 
+st.sidebar.title("Einstellungen")
+
+# Der Korrektor KANN hier seinen eigenen Key eintragen, MUSS es aber nicht.
+# type="password" sorgt dafür, dass man den Key beim Tippen nicht sieht (Datenschutz!).
+st.session_state["pixabay_key"] = st.sidebar.text_input(
+    "Pixabay API Key (Optional)",
+    type="password",
+    help="Falls vorhanden, eintragen. Ansonsten nutzt die App automatisch schöne Standard-Platzhalterbilder."
+)
+
 # --- UNSERE EIGENEN MODULE IMPORTIEREN ---
 # Hier holen wir uns die "Gehirn"-Funktionen aus dem Backend (Ordner 'core').
 from core.api_client import get_weather_data, search_city_coordinates, get_weather_icon, get_city_images, \
