@@ -7,7 +7,6 @@ von oben nach unten komplett neu ausgeführt!
 """
 
 import sys
-
 # Fügt das Hauptverzeichnis zum Systempfad hinzu, damit Python unsere eigenen
 # Ordner ('core' und 'gui') fehlerfrei findet.
 sys.path.append(".")
@@ -17,20 +16,9 @@ import streamlit.components.v1 as components
 import pandas as pd
 import altair as alt
 
-st.sidebar.title("Einstellungen")
-
-# Der Korrektor KANN hier seinen eigenen Key eintragen, MUSS es aber nicht.
-# type="password" sorgt dafür, dass man den Key beim Tippen nicht sieht (Datenschutz!).
-st.session_state["pixabay_key"] = st.sidebar.text_input(
-    "Pixabay API Key (Optional)",
-    type="password",
-    help="Falls vorhanden, eintragen. Ansonsten nutzt die App automatisch schöne Standard-Platzhalterbilder."
-)
-
 # --- UNSERE EIGENEN MODULE IMPORTIEREN ---
 # Hier holen wir uns die "Gehirn"-Funktionen aus dem Backend (Ordner 'core').
-from core.api_client import get_weather_data, search_city_coordinates, get_weather_icon, get_city_images, \
-    search_city_list
+from core.api_client import get_weather_data, search_city_coordinates, get_weather_icon, get_city_images, search_city_list
 from core.database import add_to_history, set_favorite, delete_location, get_favorites
 from gui.components import get_gallery_html
 from core.themes import ThemePalette
@@ -39,16 +27,15 @@ from core.themes import ThemePalette
 # Da Streamlit bei jedem Klick alles vergisst (die Seite lädt neu), nutzen wir
 # st.session_state als eine Art Notizblock, der sich Dinge über Ladevorgänge hinweg merkt.
 if 'history' not in st.session_state:
-    st.session_state['history'] = []  # Merkt sich die letzten Suchanfragen
+    st.session_state['history'] = []               # Merkt sich die letzten Suchanfragen
 if 'current_search' not in st.session_state:
-    st.session_state['current_search'] = None  # Die Stadt, deren Wetter gerade angezeigt wird
+    st.session_state['current_search'] = None      # Die Stadt, deren Wetter gerade angezeigt wird
 if 'direct_lat_lon' not in st.session_state:
-    st.session_state['direct_lat_lon'] = None  # Speichert exakte Koordinaten, um doppelte API-Anfragen zu sparen
+    st.session_state['direct_lat_lon'] = None      # Speichert exakte Koordinaten, um doppelte API-Anfragen zu sparen
 if 'search_results_list' not in st.session_state:
-    st.session_state[
-        'search_results_list'] = None  # Speichert die Trefferliste, wenn ein Name mehrdeutig ist (z.B. "Frankfurt")
+    st.session_state['search_results_list'] = None # Speichert die Trefferliste, wenn ein Name mehrdeutig ist (z.B. "Frankfurt")
 if 'theme_name' not in st.session_state:
-    st.session_state['theme_name'] = ThemePalette.SUMMER.label  # Standard-Farbwelt
+    st.session_state['theme_name'] = ThemePalette.SUMMER.label # Standard-Farbwelt
 
 
 # --- CALLBACK FUNKTIONEN ---
@@ -65,13 +52,11 @@ def cb_remove_history(past_item, past_name):
         st.session_state['current_search'] = None
         st.session_state['direct_lat_lon'] = None
 
-
 def cb_load_history(p_lat, p_lon, past_name):
     """Lädt eine Stadt aus dem Verlauf wieder in die Hauptansicht."""
     st.session_state['current_search'] = past_name
     st.session_state['direct_lat_lon'] = (p_lat, p_lon, past_name)
     st.session_state['search_results_list'] = None
-
 
 def cb_fav_from_history(past_name, p_lat, p_lon, past_item):
     """Speichert eine Stadt aus dem Verlauf als Favorit ab."""
@@ -80,7 +65,6 @@ def cb_fav_from_history(past_name, p_lat, p_lon, past_item):
     if past_item in st.session_state['history']:
         st.session_state['history'].remove(past_item)
 
-
 def cb_remove_fav(city_name):
     """Löscht eine Stadt aus der Favoriten-Datenbank."""
     delete_location(city_name)
@@ -88,13 +72,11 @@ def cb_remove_fav(city_name):
         st.session_state['current_search'] = None
         st.session_state['direct_lat_lon'] = None
 
-
 def cb_load_fav(city_name, fav_lat, fav_lon):
     """Lädt eine Stadt aus den Favoriten in die Hauptansicht."""
     st.session_state['current_search'] = city_name
     st.session_state['direct_lat_lon'] = (fav_lat, fav_lon, city_name)
     st.session_state['search_results_list'] = None
-
 
 def cb_add_current_fav(found_name, lat, lon):
     """Speichert die gerade angesehene Stadt als Favorit."""
@@ -121,10 +103,13 @@ st.markdown(f"""
     #MainMenu {{visibility: hidden;}}
     header {{visibility: hidden;}}
     footer {{visibility: hidden;}}
+    
+    /* Sidebar Kollaps-Button ausblenden, damit die Leiste dauerhaft bleibt */
+    [data-testid="stSidebarCollapseButton"] {{ display: none !important; }}
 
     /* Textfarben anpassen */
     .stApp, h1, h2, h3, h4, h5, h6, p, label {{ color: {current_theme.text} !important; }}
-
+    
     /* Abstände optimieren, damit die App nicht so gequetscht aussieht */
     .block-container {{ padding-top: 1.5rem !important; padding-bottom: 1rem !important; }}
 </style>
@@ -134,6 +119,7 @@ st.markdown(f"""
 st.markdown("<h1 style='margin-bottom: 0px; padding-bottom: 0px; margin-top: -30px;'>☀️ Reise-Radar</h1><br>",
             unsafe_allow_html=True)
 st.markdown("😎 Finde dein nächstes Reiseziel")
+
 
 # --- SUCHMASCHINE (EINGABEFORMULAR) ---
 # Das Formular bündelt Eingabe und Button. So lädt die App erst neu,
@@ -147,7 +133,7 @@ with st.form(key='search_form'):
 
 # Wenn der Suchen-Button gedrückt wurde:
 if submit_btn:
-    if city_input.strip():  # Prüft, ob der Text nicht nur aus Leerzeichen besteht
+    if city_input.strip(): # Prüft, ob der Text nicht nur aus Leerzeichen besteht
         # API nach Treffern fragen
         results = search_city_list(city_input)
 
@@ -173,7 +159,7 @@ weather_data_to_display = None
 # --- AUSWAHLLISTE BEI MEHREREN TREFFERN ---
 # Wenn wir vorhin eine Liste mit mehreren Treffern in den Notizblock gelegt haben, zeigen wir jetzt Buttons an.
 if st.session_state.get('search_results_list'):
-    st.info("Mehrere Ergebnisse gefunden. Bitte das gewünschte auswählen:")
+    st.info("🌍 Mehrere Städte gefunden – welche meinst du?")
     for r_lat, r_lon, r_name in st.session_state['search_results_list']:
         if st.button(r_name, key=f"sel_{r_lat}_{r_lon}"):
             # Nutzer hat sich entschieden -> In den Notizblock schreiben, Liste löschen und Seite neu laden.
@@ -182,13 +168,13 @@ if st.session_state.get('search_results_list'):
             st.session_state['search_results_list'] = None
             st.rerun()
 
+
 # --- DATEN AUS DEM BACKEND (API) HOLEN ---
 # Wenn wir eine Stadt festgelegt haben und gerade KEINE Auswahl-Liste anzeigen:
 if st.session_state['current_search'] and not st.session_state.get('search_results_list'):
 
     # Prüfen, ob wir die exakten Koordinaten schon haben (spart eine API-Anfrage)
-    if st.session_state['direct_lat_lon'] and st.session_state['direct_lat_lon'][2] == st.session_state[
-        'current_search']:
+    if st.session_state['direct_lat_lon'] and st.session_state['direct_lat_lon'][2] == st.session_state['current_search']:
         lat, lon, found_name = st.session_state['direct_lat_lon']
     else:
         # Falls nicht, suchen wir die Koordinaten schnell in der API
@@ -212,6 +198,7 @@ if st.session_state['current_search'] and not st.session_state.get('search_resul
         if temp is not None:
             icon = get_weather_icon(weather_code)
             weather_data_to_display = (found_name, lat, lon, temp, humidity, icon, h_times, h_temps, daily_data)
+
 
 # --- SEITENLEISTE (SIDEBAR) ---
 # Alles, was mit 'st.sidebar' beginnt, wird in das Menü auf der linken Seite gerendert.
@@ -241,7 +228,7 @@ if len(st.session_state['history']) > 0:
     # reversed() sorgt dafür, dass die neuste Suche ganz oben steht
     for past_item in reversed(st.session_state['history']):
         if isinstance(past_item, str):
-            continue  # Überspringt fehlerhafte alte Einträge
+            continue # Überspringt fehlerhafte alte Einträge
 
         past_name, p_lat, p_lon = past_item
         col1, col2, col3 = st.sidebar.columns([0.70, 0.15, 0.15], vertical_alignment="center")
@@ -274,6 +261,7 @@ with st.sidebar.popover("⚙️ Einstellungen", use_container_width=True):
     if selected_theme != st.session_state['theme_name']:
         st.session_state['theme_name'] = selected_theme
         st.rerun()
+
 
 # --- HAUPTANSICHT: WETTERDATEN ANZEIGEN ---
 # Wenn unser Datenpaket oben erfolgreich gefüllt wurde, bauen wir jetzt das Dashboard auf.
@@ -333,7 +321,7 @@ if weather_data_to_display:
                              label_visibility="collapsed")
         start_idx = 0 if "Woche 1" in week_view else 7
 
-        cols = st.columns(7)  # 7 Spalten für 7 Tage
+        cols = st.columns(7) # 7 Spalten für 7 Tage
         days_de = {"Mon": "Mo", "Tue": "Di", "Wed": "Mi", "Thu": "Do", "Fri": "Fr", "Sat": "Sa", "Sun": "So"}
 
         for i, col in enumerate(cols):
@@ -382,6 +370,7 @@ if weather_data_to_display:
 # Fehlermeldung, wenn die API keine Daten für die gesuchte Stadt hat
 elif st.session_state['current_search'] is not None:
     st.error(f"Das Wetter für '{st.session_state['current_search']}' konnte nicht geladen werden. Tippfehler?")
+
 
 # --- ZUSATZ-FEATURE: REISEZIELE VERGLEICHEN ---
 # Zeigt sich nur, wenn man mindestens 2 Orte in den Favoriten gespeichert hat.
